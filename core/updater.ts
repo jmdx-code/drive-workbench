@@ -177,8 +177,15 @@ export class PortableUpdater {
   }
   async prepareInstall(pid: number): Promise<Helper> {
     if (!this.ready || this.state.status !== 'ready') throw Error('更新包尚未下载完成');
-    if ((await sha256File(this.ready.file)) !== this.ready.checksum)
-      throw Error('更新包已变化，请重新检查更新');
+    if ((await sha256File(this.ready.file).catch(() => '')) !== this.ready.checksum) {
+      this.ready = undefined;
+      this.state = {
+        current: this.options.version,
+        status: 'error',
+        error: '更新包已变化，请重新检查更新',
+      };
+      throw Error(this.state.error);
+    }
     const root = path.resolve(this.options.appRoot);
     if (root === path.parse(root).root) throw Error('应用路径无效');
     await access(

@@ -19,6 +19,7 @@ const errors = [],
   checks = [];
 try {
   const page = await app.firstWindow();
+  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].showInactive());
   page.setDefaultTimeout(15000);
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => {

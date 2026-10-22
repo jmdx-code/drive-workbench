@@ -9,6 +9,7 @@ for (const script of [
   'api-concurrency-ui-test',
   'transfer-root-ui-test',
   'skip-transfer-ui-test',
+  'update-ui-test',
 ])
   execFileSync(process.execPath, [`scripts/${script}.mjs`, executable], {
     stdio: 'inherit',

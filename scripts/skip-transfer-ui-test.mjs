@@ -16,6 +16,7 @@ const app = await electron.launch({
 const errors = [];
 try {
   const page = await app.firstWindow();
+  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].showInactive());
   // Isolated demo fixture: one nested file belongs to an unrelated third party.
   await app.evaluate(async ({ app, BrowserWindow, dialog }) => {
     const require = process

@@ -135,5 +135,8 @@ describe('便携版自动更新', () => {
     await updater.check();
     await writeFile(path.join(options.cacheDir, name), 'tampered');
     await expect(updater.prepareInstall(123)).rejects.toThrow('已变化');
+    expect(updater.state.status).toBe('error');
+    await updater.check();
+    expect(updater.state.status).toBe('ready');
   });
 });
