@@ -5,6 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { brandExecutable } from './branding.mjs';
+import { ensureElectronRuntime } from './runtime.mjs';
 if (process.platform === 'darwin') {
   await import('./package-mac.mjs');
   process.exit(0);
@@ -12,6 +13,7 @@ if (process.platform === 'darwin') {
 if (process.platform !== 'win32' || process.arch !== 'x64')
   throw new Error('请在 Windows x64 或 macOS 原生 runner 上打包');
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+await ensureElectronRuntime(root);
 const pkg = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
 const base = `DriveWorkbench-${pkg.version}-Windows-x64`;
 const releaseRoot = path.resolve(root, 'release');

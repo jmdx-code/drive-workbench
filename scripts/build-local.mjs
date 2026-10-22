@@ -2,8 +2,10 @@ import { cp, mkdir, readFile, writeFile, access, rename, rm } from 'node:fs/prom
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { brandExecutable } from './branding.mjs';
+import { ensureElectronRuntime } from './runtime.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+await ensureElectronRuntime(root);
 const output = path.join(root, '本地测试');
 const executable = path.join(output, '云盘工作台.exe');
 const appRoot = path.join(output, 'resources', 'app');

@@ -16,6 +16,7 @@ const app = await electron.launch({
 });
 try {
   const page = await app.firstWindow();
+  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].showInactive());
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.getByText('连接你的第一个账号', { exact: true }).waitFor();
