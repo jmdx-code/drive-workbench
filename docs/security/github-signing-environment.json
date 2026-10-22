@@ -1,0 +1,19 @@
+{
+  "repository": "jmdx-code/drive-workbench",
+  "environment": "release-signing",
+  "requiredReviewers": ["jmdx-code"],
+  "preventSelfReview": false,
+  "allowedRefs": [
+    { "name": "main", "type": "branch" },
+    { "name": "v*", "type": "tag" }
+  ],
+  "secret": {
+    "name": "UPDATE_SIGNING_PRIVATE_KEY",
+    "updatedAt": "2026-10-22T13:35:12Z"
+  },
+  "localPublicKeyMatchesUploadedInput": true,
+  "publicKeySHA256": "84a193c2cfdad43264a97973c17c0cbbbabe310442e2148c198293cd4fe49305",
+  "remoteConfigurationReadBackVerified": true,
+  "workflowTriggered": false,
+  "localSourcePushed": false
+}

@@ -1,8 +1,8 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, rename } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
-import { rcedit } from 'rcedit';
+import { NtExecutable, NtExecutableResource, Data, Resource } from 'resedit';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = path.join(root, 'assets/branding/app-icon-source.png');
@@ -48,18 +48,35 @@ export async function prepareIcons() {
 
 export async function brandExecutable(executable) {
   const pkg = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
-  await rcedit(executable, {
-    icon: ico,
-    'file-version': pkg.version,
-    'product-version': pkg.version,
-    'version-string': {
-      ProductName: '云盘工作台',
-      FileDescription: '云盘工作台',
-      CompanyName: 'Drive Workbench',
-      OriginalFilename: '云盘工作台.exe',
-      InternalName: 'DriveWorkbench',
-    },
-  });
+  // Branding changes signed bytes. Refuse signed inputs rather than silently
+  // stripping a publisher signature; code signing must happen after branding.
+  const exe = NtExecutable.from(await readFile(executable));
+  const resources = NtExecutableResource.from(exe);
+  const icons = Data.IconFile.from(await readFile(ico)).icons.map((item) => item.data);
+  const groups = Resource.IconGroupEntry.fromEntries(resources.entries);
+  for (const group of groups.length ? groups : [{ id: 1, lang: 1033 }])
+    Resource.IconGroupEntry.replaceIconsForResource(resources.entries, group.id, group.lang, icons);
+  const versions = Resource.VersionInfo.fromEntries(resources.entries);
+  for (const version of versions.length ? versions : [Resource.VersionInfo.createEmpty()]) {
+    const languages = version.getAllLanguagesForStringValues();
+    for (const language of languages.length ? languages : [{ lang: 1033, codepage: 1200 }]) {
+      version.setFileVersion(pkg.version, language.lang);
+      version.setProductVersion(pkg.version, language.lang);
+      version.setStringValues(language, {
+        ProductName: '云盘工作台',
+        FileDescription: '云盘工作台',
+        CompanyName: 'Drive Workbench',
+        OriginalFilename: '云盘工作台.exe',
+        InternalName: 'DriveWorkbench',
+      });
+    }
+    version.outputToResourceEntries(resources.entries);
+  }
+  resources.outputResource(exe);
+  // Write an intermediate so a failed transformation never truncates the input.
+  const temporary = executable + '.branding.tmp';
+  await writeFile(temporary, Buffer.from(exe.generate()), { flag: 'wx' });
+  await rename(temporary, executable);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

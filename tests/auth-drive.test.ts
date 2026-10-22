@@ -3,6 +3,7 @@ import { MemoryStore } from '../core/store.js';
 import { AuthService } from '../core/auth.js';
 import { GoogleDrive } from '../core/drive.js';
 import { createHash } from 'node:crypto';
+import { request as httpRequest } from 'node:http';
 const json = (value: unknown, status = 200) =>
   new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } });
 const connected = () => {
@@ -72,6 +73,37 @@ describe('真实授权接口适配与连接池', () => {
       challenge = u.searchParams.get('code_challenge')!;
       redirect = u.searchParams.get('redirect_uri')!;
       expect(u.searchParams.get('code_challenge_method')).toBe('S256');
+      // Raw HTTP can carry targets that fetch() refuses to construct. Invalid
+      // callbacks must return 400 without throwing out of the request listener.
+      const rawCallback = (target: string, method = 'GET', host?: string) =>
+        new Promise<number>((resolve, reject) => {
+          const request = httpRequest(
+            {
+              hostname: '127.0.0.1',
+              port: new URL(redirect).port,
+              path: target,
+              method,
+              ...(host ? { headers: { Host: host } } : {}),
+            },
+            (response) => {
+              expect(response.headers['cache-control']).toBe('no-store');
+              response.resume();
+              response.on('end', () => resolve(response.statusCode!));
+            },
+          );
+          request.on('error', reject);
+          request.end();
+        });
+      expect(await rawCallback('http://[')).toBe(400);
+      const validPath =
+        '/oauth/callback?' +
+        new URLSearchParams({
+          state: u.searchParams.get('state')!,
+          code: 'valid-code',
+        });
+      expect(await rawCallback(validPath, 'POST')).toBe(400);
+      expect(await rawCallback(validPath, 'GET', 'attacker.example')).toBe(400);
+      expect(await rawCallback('http://attacker.example' + validPath)).toBe(400);
       const bad = new URL(redirect);
       bad.search = new URLSearchParams({
         state: '错'.repeat(u.searchParams.get('state')!.length),

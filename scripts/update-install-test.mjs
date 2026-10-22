@@ -1,10 +1,11 @@
 // Applies a real Windows portable ZIP to an isolated fixture directory.
 // Never targets the user's running application or account profile.
-import { mkdtemp, mkdir, writeFile, readFile, cp, readdir, access } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, cp, readdir, access, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { spawn, execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { extractFile } from '@electron/asar';
+import { generateKeyPairSync, sign } from 'node:crypto';
 import { PortableUpdater } from '../dist-desktop/core/updater.js';
 if (process.platform !== 'win32') throw Error('Windows fixture test');
 const manifest = JSON.parse(await readFile('release/当前版本.json', 'utf8'));
@@ -19,6 +20,21 @@ await writeFile(path.join(appRoot, 'resources/app.asar'), 'old fixture');
 await writeFile(path.join(appRoot, 'old-marker.txt'), 'preserve old app');
 await writeFile(path.join(profile, 'user-data-marker.txt'), 'preserve accounts');
 await cp(path.resolve('release', manifest.archive), path.join(cacheDir, manifest.archive));
+const { publicKey, privateKey } = generateKeyPairSync('ed25519');
+const signedRaw = JSON.stringify({
+  schema: 1,
+  version: manifest.version,
+  assets: [
+    {
+      name: manifest.archive,
+      platform: 'win32',
+      arch: 'x64',
+      size: (await stat(path.join(cacheDir, manifest.archive))).size,
+      sha256: manifest.sha256,
+    },
+  ],
+});
+const signature = sign(null, Buffer.from(signedRaw), privateKey).toString('hex');
 globalThis.fetch = async (url) =>
   String(url).endsWith('/latest')
     ? new Response(
@@ -29,11 +45,18 @@ globalThis.fetch = async (url) =>
               name: manifest.archive,
               browser_download_url: 'https://github.com/fixture/package.zip',
             },
-            { name: 'SHA256SUMS.txt', browser_download_url: 'https://github.com/fixture/sums' },
+            {
+              name: 'UPDATE-MANIFEST.json',
+              browser_download_url: 'https://github.com/fixture/manifest',
+            },
+            {
+              name: 'UPDATE-MANIFEST.sig',
+              browser_download_url: 'https://github.com/fixture/signature',
+            },
           ],
         }),
       )
-    : new Response(`${manifest.sha256}  ${manifest.archive}\n`);
+    : new Response(String(url).endsWith('/manifest') ? signedRaw : signature);
 const updater = new PortableUpdater({
   version: '1.3.2',
   platform: 'win32',
@@ -41,6 +64,7 @@ const updater = new PortableUpdater({
   packaged: true,
   appRoot,
   cacheDir,
+  publicKey: publicKey.export({ type: 'spki', format: 'pem' }).toString(),
 });
 await updater.check();
 if (updater.state.status !== 'ready') throw Error(JSON.stringify(updater.state));

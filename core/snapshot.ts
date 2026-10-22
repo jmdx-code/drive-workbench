@@ -8,6 +8,7 @@ import {
 } from './directory.js';
 import { fileLink, permissionRows, fileIcon } from './presentation.js';
 import { FOLDER, type FileEntry } from './types.js';
+import { csvCell } from './csv.js';
 export const escapeHtml = (s: string) =>
   s.replace(
     /[&<>"']/g,
@@ -84,8 +85,6 @@ document.getElementById('copy').onclick=async()=>{const checked=all().filter(x=>
 }
 export function snapshotCsv(files: FileEntry[], rootId?: string) {
   const index = directoryIndex(files, rootId);
-  const cell = (value: string) =>
-    '"' + (/^[=+@\-\t\r\n]/.test(value) ? "'" : '') + value.replace(/"/g, '""') + '"';
   const rows = [
     [
       '名称',
@@ -124,5 +123,5 @@ export function snapshotCsv(files: FileEntry[], rootId?: string) {
       fileLink(f),
     ]),
   ];
-  return '\uFEFF' + rows.map((row) => row.map(cell).join(',')).join('\r\n');
+  return '\uFEFF' + rows.map((row) => row.map(csvCell).join(',')).join('\r\n');
 }

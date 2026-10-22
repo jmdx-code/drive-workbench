@@ -1,0 +1,356 @@
+[
+  {
+    "name": "@tanstack/react-virtual",
+    "latest": "3.14.22",
+    "latestPublished": "2026-10-22T12:04:59.206Z",
+    "repository": {
+      "url": "git+https://github.com/TanStack/virtual.git",
+      "type": "git",
+      "directory": "packages/react-virtual"
+    },
+    "installed": [
+      {
+        "version": "3.14.21",
+        "published": "2026-10-16T11:19:18.479Z"
+      }
+    ]
+  },
+  {
+    "name": "@types/react",
+    "latest": "19.3.0",
+    "latestPublished": "2026-09-09T18:08:49.750Z",
+    "repository": {
+      "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+      "type": "git",
+      "directory": "types/react"
+    },
+    "installed": [
+      {
+        "version": "19.3.0",
+        "published": "2026-09-09T18:08:49.750Z"
+      }
+    ]
+  },
+  {
+    "name": "@types/react-dom",
+    "latest": "19.3.0",
+    "latestPublished": "2026-09-09T18:07:51.886Z",
+    "repository": {
+      "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+      "type": "git",
+      "directory": "types/react-dom"
+    },
+    "installed": [
+      {
+        "version": "19.3.0",
+        "published": "2026-09-09T18:07:51.886Z"
+      }
+    ]
+  },
+  {
+    "name": "@types/node",
+    "latest": "26.6.5",
+    "latestPublished": "2026-10-09T18:46:47.657Z",
+    "repository": {
+      "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+      "type": "git",
+      "directory": "types/node"
+    },
+    "installed": [
+      {
+        "version": "24.19.2",
+        "published": "2026-10-09T18:44:25.189Z"
+      }
+    ]
+  },
+  {
+    "name": "@electron/asar",
+    "latest": "4.3.1",
+    "latestPublished": "2026-09-26T14:35:43.764Z",
+    "repository": {
+      "url": "git+https://github.com/electron/asar.git",
+      "type": "git"
+    },
+    "installed": [
+      {
+        "version": "4.3.1",
+        "published": "2026-09-26T14:35:43.764Z"
+      }
+    ]
+  },
+  {
+    "name": "@electron/packager",
+    "latest": "20.3.0",
+    "latestPublished": "2026-08-11T20:24:53.210Z",
+    "repository": {
+      "url": "git+https://github.com/electron/packager.git",
+      "type": "git"
+    },
+    "installed": [
+      {
+        "version": "20.3.0",
+        "published": "2026-08-11T20:24:53.210Z"
+      }
+    ]
+  },
+  {
+    "name": "prettier",
+    "latest": "3.9.10",
+    "latestPublished": "2026-10-10T08:35:28.472Z",
+    "repository": {
+      "url": "git+https://github.com/prettier/prettier.git",
+      "type": "git"
+    },
+    "installed": [
+      {
+        "version": "3.9.10",
+        "published": "2026-10-10T08:35:28.472Z"
+      }
+    ]
+  },
+  {
+    "name": "lucide-react",
+    "latest": "1.61.0",
+    "latestPublished": "2026-10-21T06:12:38.158Z",
+    "repository": {
+      "url": "https://github.com/lucide-icons/lucide.git",
+      "type": "git",
+      "directory": "packages/lucide-react"
+    },
+    "installed": [
+      {
+        "version": "1.59.0",
+        "published": "2026-10-17T06:15:48.758Z"
+      }
+    ]
+  },
+  {
+    "name": "@vitejs/plugin-react",
+    "latest": "6.1.2",
+    "latestPublished": "2026-10-05T10:08:27.143Z",
+    "repository": {
+      "url": "git+https://github.com/vitejs/vite-plugin-react.git",
+      "type": "git",
+      "directory": "packages/plugin-react"
+    },
+    "installed": [
+      {
+        "version": "6.1.2",
+        "published": "2026-10-05T10:08:27.143Z"
+      }
+    ]
+  },
+  {
+    "name": "react",
+    "latest": "19.3.1",
+    "latestPublished": "2026-10-14T16:47:15.290Z",
+    "repository": {
+      "url": "git+https://github.com/react/react.git",
+      "type": "git",
+      "directory": "packages/react"
+    },
+    "installed": [
+      {
+        "version": "19.3.1",
+        "published": "2026-10-14T16:47:15.290Z"
+      }
+    ]
+  },
+  {
+    "name": "playwright-core",
+    "latest": "1.64.1",
+    "latestPublished": "2026-10-14T11:54:58.323Z",
+    "repository": {
+      "url": "git+https://github.com/microsoft/playwright.git",
+      "type": "git"
+    },
+    "installed": [
+      {
+        "version": "1.64.1",
+        "published": "2026-10-14T11:54:58.323Z"
+      }
+    ]
+  },
+  {
+    "name": "electron",
+    "latest": "45.0.0",
+    "latestPublished": "2026-10-21T06:03:52.729Z",
+    "repository": {
+      "url": "git+https://github.com/electron/electron.git",
+      "type": "git"
+    },
+    "installed": [
+      {
+        "version": "44.9.3",
+        "published": "2026-10-21T03:31:39.419Z"
+      }
+    ]
+  },
+  {
+    "name": "sharp",
+    "latest": "0.35.5",
+    "latestPublished": "2026-09-27T13:46:24.509Z",
+    "repository": {
+      "url": "git+https://github.com/lovell/sharp.git",
+      "type": "git"
+    },
+    "installed": [
+      {
+        "version": "0.35.5",
+        "published": "2026-09-27T13:46:24.509Z"
+      }
+    ]
+  },
+  {
+    "name": "vitest",
+    "latest": "5.0.5",
+    "latestPublished": "2026-10-15T14:29:01.396Z",
+    "repository": {
+      "url": "git+https://github.com/vitest-dev/vitest.git",
+      "type": "git",
+      "directory": "packages/vitest"
+    },
+    "installed": [
+      {
+        "version": "5.0.5",
+        "published": "2026-10-15T14:29:01.396Z"
+      }
+    ]
+  },
+  {
+    "name": "resedit",
+    "latest": "3.1.0",
+    "latestPublished": "2026-08-25T12:50:59.750Z",
+    "repository": {
+      "url": "git+https://github.com/jet2jet/resedit-js.git",
+      "type": "git"
+    },
+    "installed": [
+      {
+        "version": "2.0.3",
+        "published": "2024-10-08T12:13:36.612Z"
+      },
+      {
+        "version": "3.1.0",
+        "published": "2026-08-25T12:50:59.750Z"
+      }
+    ]
+  },
+  {
+    "name": "react-dom",
+    "latest": "19.3.1",
+    "latestPublished": "2026-10-14T16:49:10.081Z",
+    "repository": {
+      "url": "git+https://github.com/react/react.git",
+      "type": "git",
+      "directory": "packages/react-dom"
+    },
+    "installed": [
+      {
+        "version": "19.3.1",
+        "published": "2026-10-14T16:49:10.081Z"
+      }
+    ]
+  },
+  {
+    "name": "typescript",
+    "latest": "7.0.2",
+    "latestPublished": "2026-07-08T15:55:18.431Z",
+    "repository": {
+      "url": "git+https://github.com/microsoft/TypeScript.git",
+      "type": "git"
+    },
+    "installed": [
+      {
+        "version": "7.0.2",
+        "published": "2026-07-08T15:55:18.431Z"
+      }
+    ]
+  },
+  {
+    "name": "vite",
+    "latest": "8.3.5",
+    "latestPublished": "2026-10-21T06:38:54.907Z",
+    "repository": {
+      "url": "git+https://github.com/vitejs/vite.git",
+      "type": "git",
+      "directory": "packages/vite"
+    },
+    "installed": [
+      {
+        "version": "8.3.4",
+        "published": "2026-10-08T12:07:04.441Z"
+      }
+    ]
+  },
+  {
+    "name": "progress",
+    "latest": "2.0.3",
+    "latestPublished": "2018-12-05T16:57:58.058Z",
+    "repository": {
+      "url": "git://github.com/visionmedia/node-progress.git",
+      "type": "git"
+    },
+    "installed": [
+      {
+        "version": "2.0.3",
+        "published": "2018-12-05T16:57:58.058Z"
+      }
+    ]
+  },
+  {
+    "name": "retry",
+    "latest": "0.13.1",
+    "latestPublished": "2021-06-21T07:45:32.286Z",
+    "repository": {
+      "type": "git",
+      "url": "git://github.com/tim-kos/node-retry.git"
+    },
+    "installed": [
+      {
+        "version": "0.12.0",
+        "published": "2018-04-09T09:35:27.678Z"
+      }
+    ]
+  },
+  {
+    "name": "sumchecker",
+    "latest": "3.0.1",
+    "latestPublished": "2019-11-25T22:00:49.327Z",
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/malept/sumchecker.git"
+    },
+    "installed": [
+      {
+        "version": "3.0.1",
+        "published": "2019-11-25T22:00:49.327Z"
+      }
+    ]
+  },
+  {
+    "name": "cross-spawn-windows-exe",
+    "latest": "1.2.0",
+    "latestPublished": "2021-07-16T08:10:49.708Z",
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/malept/cross-spawn-windows-exe.git"
+    },
+    "installed": []
+  },
+  {
+    "name": "postject",
+    "latest": "1.0.0-alpha.6",
+    "latestPublished": "2023-05-19T06:25:32.487Z",
+    "repository": {
+      "type": "git",
+      "url": "git+ssh://git@github.com/nodejs/postject.git"
+    },
+    "installed": [
+      {
+        "version": "1.0.0-alpha.6",
+        "published": "2023-05-19T06:25:32.487Z"
+      }
+    ]
+  }
+]

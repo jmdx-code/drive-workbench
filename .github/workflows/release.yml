@@ -76,24 +76,40 @@ jobs:
     if: github.event_name == 'release' || inputs.publish
     needs: build
     runs-on: ubuntu-24.04
+    environment: release-signing
     permissions:
       contents: write
     env:
-      GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
       GH_REPO: ${{ github.repository }}
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - run: node scripts/verify-release-tag.mjs
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: packages-*
           path: packages
           merge-multiple: true
-      - name: Verify all packages and publish atomically after all builds pass
+      - name: Sign the exact packages after all builds pass
+        env:
+          WB_UPDATE_SIGNING_PRIVATE_KEY: ${{ secrets.UPDATE_SIGNING_PRIVATE_KEY }}
+        run: |
+          test -n "$WB_UPDATE_SIGNING_PRIVATE_KEY" || { echo 'Configure UPDATE_SIGNING_PRIVATE_KEY in release-signing Environment'; exit 1; }
+          node scripts/sign-release.mjs packages
+      - name: Verify packages and publish signed release
+        env:
+          GH_TOKEN: ${{ github.token }}
         working-directory: packages
         shell: bash
         run: |
           set -euo pipefail
-          cat SHA256SUMS-*.txt > SHA256SUMS.txt
           test "$(find . -maxdepth 1 -name '*.zip' | wc -l)" -eq 3
           sha256sum --check SHA256SUMS.txt
-          gh release upload "$RELEASE_TAG" ./*.zip SHA256SUMS.txt --clobber
+          gh release upload "$RELEASE_TAG" ./*.zip SHA256SUMS.txt UPDATE-MANIFEST.json UPDATE-MANIFEST.sig --clobber

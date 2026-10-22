@@ -22,6 +22,7 @@ import { GoogleDrive } from '../core/drive.js';
 import { TaskEngine } from '../core/engine.js';
 import { sumCounters } from '../core/telemetry.js';
 import { snapshotHtml, snapshotCsv } from '../core/snapshot.js';
+import { csvCell } from '../core/csv.js';
 import { type ActionRequest, type Settings, type DriveApi, type FileEntry } from '../core/types.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -55,7 +56,7 @@ let demoEngine: TaskEngine;
 const repo = (): Repository => (mode === 'demo' ? demo : live);
 const drive = (): DriveApi => (mode === 'demo' ? demoDrive : google);
 const engine = () => (mode === 'demo' ? demoEngine : liveEngine);
-const dev = process.argv.includes('--dev');
+const dev = !app.isPackaged && process.argv.includes('--dev');
 const text = (v: unknown, max = 2000) => {
   if (typeof v !== 'string' || !v || v.length > max) throw new Error('输入参数无效');
   return v;
@@ -74,6 +75,7 @@ function register(name: string, handler: (...args: any[]) => unknown) {
     const origin = event.senderFrame?.url || '';
     if (
       event.sender !== window.webContents ||
+      event.senderFrame !== window.webContents.mainFrame ||
       !(dev
         ? origin.startsWith('http://127.0.0.1:5173/')
         : origin === new URL('../../dist/index.html', import.meta.url).href)
@@ -457,11 +459,6 @@ async function initialize() {
       filters: [{ name: 'CSV', extensions: ['csv'] }],
     });
     if (result.canceled || !result.filePath) return '已取消';
-    const cell = (v: unknown) => {
-      let s = String(v ?? '');
-      if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
-      return `"${s.replace(/"/g, '""')}"`;
-    };
     const rows = [
       [
         '文件名称',
@@ -492,7 +489,7 @@ async function initialize() {
     ];
     await writeFile(
       result.filePath,
-      '\uFEFF' + rows.map((r) => r.map(cell).join(',')).join('\r\n'),
+      '\uFEFF' + rows.map((r) => r.map(csvCell).join(',')).join('\r\n'),
       'utf8',
     );
     return '任务报告已导出';
@@ -515,7 +512,13 @@ async function initialize() {
       sandbox: true,
     },
   });
+  // This application needs no browser device, notification or geolocation permissions.
+  window.webContents.session.setPermissionRequestHandler((_contents, _permission, callback) =>
+    callback(false),
+  );
+  window.webContents.session.setPermissionCheckHandler(() => false);
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  window.webContents.on('will-attach-webview', (event) => event.preventDefault());
   window.webContents.on('will-navigate', (e, url) => {
     if (url !== window.webContents.getURL()) e.preventDefault();
   });

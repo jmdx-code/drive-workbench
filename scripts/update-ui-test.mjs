@@ -10,6 +10,7 @@ const app = await electron.launch({
   timeout: 45000,
 });
 try {
+  const page = await app.firstWindow();
   await app.evaluate(({ ipcMain, BrowserWindow, app }) => {
     BrowserWindow.getAllWindows()[0].showInactive();
     const original = ipcMain._invokeHandlers.get('workbench:bootstrap');
@@ -31,7 +32,6 @@ try {
       globalThis.qaInstalled++;
     });
   });
-  const page = await app.firstWindow();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.getByRole('button', { name: '设置', exact: true }).click();

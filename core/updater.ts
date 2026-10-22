@@ -1,8 +1,10 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { createReadStream } from 'node:fs';
-import { access, mkdir, open, rename, writeFile } from 'node:fs/promises';
+import { access, mkdir, open, rename, writeFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import type { UpdateState } from './types.js';
+import { MANIFEST_NAME, SIGNATURE_NAME, verifyUpdateManifest } from './update-signature.js';
+import { UPDATE_PUBLIC_KEY } from './update-key.js';
 
 export const RELEASE_API = 'https://api.github.com/repos/jmdx-code/drive-workbench/releases/latest';
 const githubUrl = (raw: string) => {
@@ -77,7 +79,7 @@ export type Helper = { command: string; args: string[]; cwd: string };
 export class PortableUpdater {
   state: UpdateState;
   private pending?: Promise<void>;
-  private ready?: { file: string; version: string; checksum: string };
+  private ready?: { file: string; version: string; checksum: string; size: number };
   constructor(
     private options: {
       version: string;
@@ -86,6 +88,7 @@ export class PortableUpdater {
       packaged: boolean;
       appRoot: string;
       cacheDir: string;
+      publicKey?: string; // Trusted dependency injection for tests; never supplied by IPC or network.
     },
   ) {
     this.state = {
@@ -128,19 +131,32 @@ export class PortableUpdater {
     }
     const platform = this.options.platform === 'win32' ? 'Windows' : 'macOS';
     const name = `DriveWorkbench-${version}-${platform}-${this.options.arch}.zip`;
-    const asset = release.assets.find((a) => a.name === name),
-      sums = release.assets.find((a) => a.name === 'SHA256SUMS.txt');
-    if (!asset || !sums) throw Error('新版本仍在构建，请稍后检查更新');
-    const lines = (await smallText(sums.browser_download_url)).split(/\r?\n/);
-    const matches = lines
-      .map((line) => line.match(/^([a-f0-9]{64})\s+\*?(.+)$/i))
-      .filter((m) => m?.[2] === name);
-    if (matches.length !== 1) throw Error('更新包校验信息缺失或重复');
-    const checksum = matches[0]![1].toLowerCase();
+    const uniqueAsset = (assetName: string) => {
+      const matches = release.assets.filter((asset) => asset.name === assetName);
+      if (matches.length !== 1) throw Error('新版本仍在构建或缺少唯一签名资产，请稍后检查更新');
+      return matches[0];
+    };
+    const asset = uniqueAsset(name),
+      manifestAsset = uniqueAsset(MANIFEST_NAME),
+      signatureAsset = uniqueAsset(SIGNATURE_NAME);
+    const manifest = verifyUpdateManifest(
+      await smallText(manifestAsset.browser_download_url),
+      await smallText(signatureAsset.browser_download_url),
+      this.options.publicKey ?? UPDATE_PUBLIC_KEY,
+    );
+    if (manifest.version !== version) throw Error('签名清单版本与发布版本不一致');
+    const signed = manifest.assets.find(
+      (item) =>
+        item.name === name &&
+        item.platform === this.options.platform &&
+        item.arch === this.options.arch,
+    );
+    if (!signed) throw Error('签名清单缺少当前平台更新包');
+    const checksum = signed.sha256;
     await mkdir(this.options.cacheDir, { recursive: true });
     const file = path.join(this.options.cacheDir, name);
     const cached = await sha256File(file).catch(() => '');
-    if (cached !== checksum) {
+    if (cached !== checksum || (await stat(file).catch(() => undefined))?.size !== signed.size) {
       this.state = {
         current: this.options.version,
         latest: version,
@@ -160,7 +176,7 @@ export class PortableUpdater {
           const { value, done } = await reader.read();
           if (done) break;
           size += value.length;
-          if (size > 1024 ** 3) throw Error('更新包超过大小限制');
+          if (size > signed.size) throw Error('更新包超过签名大小限制');
           hash.update(value);
           await handle.writeFile(value);
           this.state.percent = total ? Math.min(99, Math.floor((size / total) * 100)) : undefined;
@@ -169,15 +185,19 @@ export class PortableUpdater {
         await reader.cancel();
         await handle.close();
       }
-      if (hash.digest('hex') !== checksum) throw Error('更新包 SHA256 校验失败，未安装');
+      if (hash.digest('hex') !== checksum || size !== signed.size)
+        throw Error('更新包 SHA256 或签名大小校验失败，未安装');
       await rename(part, file);
     }
-    this.ready = { file, version, checksum };
+    this.ready = { file, version, checksum, size: signed.size };
     this.state = { current: this.options.version, latest: version, status: 'ready', percent: 100 };
   }
   async prepareInstall(pid: number): Promise<Helper> {
     if (!this.ready || this.state.status !== 'ready') throw Error('更新包尚未下载完成');
-    if ((await sha256File(this.ready.file).catch(() => '')) !== this.ready.checksum) {
+    if (
+      (await sha256File(this.ready.file).catch(() => '')) !== this.ready.checksum ||
+      (await stat(this.ready.file).catch(() => undefined))?.size !== this.ready.size
+    ) {
       this.ready = undefined;
       this.state = {
         current: this.options.version,

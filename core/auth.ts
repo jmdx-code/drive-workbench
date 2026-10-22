@@ -72,6 +72,9 @@ export class AuthService {
       finish = resolve;
       fail = reject;
     });
+    // A callback or timeout can reject while the system browser is still opening.
+    // Keep that rejection observed; awaiting result below still propagates it.
+    void result.catch(() => {});
     await new Promise<void>((resolve, reject) => {
       server.once('error', reject);
       server.listen(0, '127.0.0.1', resolve);
@@ -79,10 +82,22 @@ export class AuthService {
     const port = (server.address() as { port: number }).port;
     const redirect = `http://127.0.0.1:${port}/oauth/callback`;
     server.on('request', (req, res) => {
-      const url = new URL(req.url || '/', redirect);
+      res.setHeader('Cache-Control', 'no-store');
+      res.setHeader('Referrer-Policy', 'no-referrer');
+      let url: URL;
+      try {
+        url = new URL(req.url || '/', redirect);
+      } catch {
+        res.writeHead(400);
+        res.end('Invalid callback');
+        return;
+      }
       const actual = Buffer.from(url.searchParams.get('state') || ''),
         expected = Buffer.from(state);
       if (
+        req.method !== 'GET' ||
+        req.headers.host !== `127.0.0.1:${port}` ||
+        url.origin !== new URL(redirect).origin ||
         url.pathname !== '/oauth/callback' ||
         actual.length !== expected.length ||
         !timingSafeEqual(actual, expected)
