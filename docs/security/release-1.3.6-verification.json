@@ -1,0 +1,58 @@
+{
+  "repository": "jmdx-code/drive-workbench",
+  "version": "1.3.6",
+  "sourceCommit": "3747b24b8bdedfea432358f4c8b41da3c122f7f7",
+  "releaseUrl": "https://github.com/jmdx-code/drive-workbench/releases/tag/v1.3.6",
+  "buildRun": {
+    "id": 39788846932,
+    "conclusion": "success"
+  },
+  "ciRun": {
+    "id": 39788844076,
+    "conclusion": "success"
+  },
+  "finalReleaseState": {
+    "draft": false,
+    "prerelease": false,
+    "latest": true
+  },
+  "publicDownloadVerification": {
+    "repository": "jmdx-code/drive-workbench",
+    "tag": "v1.3.6",
+    "checkedAt": "2026-10-22T13:45:01.617Z",
+    "draft": false,
+    "prerelease": true,
+    "signatureVerified": true,
+    "assets": [
+      {
+        "name": "DriveWorkbench-1.3.6-Windows-x64.zip",
+        "size": 158996827,
+        "sha256": "de20191d575fb6411362fb52f66795097510a9cd371b20e5380da38d7e6ca126",
+        "publicDownloadVerified": true
+      },
+      {
+        "name": "DriveWorkbench-1.3.6-macOS-arm64.zip",
+        "size": 132407898,
+        "sha256": "ef275dee000ac92c5a67110b6540befa476da0152cdd3c80c61c75a1d9c931fe",
+        "publicDownloadVerified": true
+      },
+      {
+        "name": "DriveWorkbench-1.3.6-macOS-x64.zip",
+        "size": 138123497,
+        "sha256": "79bd450b5bb959bb7fcaba76e171800a0d734fb6fca90352af56405b66ab32f3",
+        "publicDownloadVerified": true
+      }
+    ]
+  },
+  "liveUpdaterVerification": {
+    "passed": true,
+    "checkedAt": "2026-10-22T13:47:05.495Z",
+    "source": "public GitHub latest release",
+    "current": "1.3.5",
+    "latest": "1.3.6",
+    "status": "ready",
+    "downloadedWithPinnedPublicKey": true,
+    "installed": false,
+    "profileAccessed": false
+  }
+}
