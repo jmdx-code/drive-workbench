@@ -14,6 +14,7 @@ for (const script of [
   'transfer-root-ui-test',
   'skip-transfer-ui-test',
   'update-ui-test',
+  'update-asar-ui-test',
   'update-install-test',
 ])
   execFileSync(process.execPath, [`scripts/${script}.mjs`, executable], {

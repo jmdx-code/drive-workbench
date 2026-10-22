@@ -55,6 +55,9 @@ jobs:
       - name: Windows business regression
         if: runner.os == 'Windows'
         run: node scripts/ci-windows-ui.mjs
+      - name: macOS packaged updater preparation
+        if: runner.os == 'macOS'
+        run: node scripts/update-asar-ui-test.mjs
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: packages-${{ matrix.target }}

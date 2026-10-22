@@ -1,10 +1,18 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { createReadStream } from 'node:fs';
-import { access, mkdir, open, rename, writeFile, stat } from 'node:fs/promises';
+import { mkdir, open, rename, writeFile, stat } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import type { UpdateState } from './types.js';
 import { MANIFEST_NAME, SIGNATURE_NAME, verifyUpdateManifest } from './update-signature.js';
 import { UPDATE_PUBLIC_KEY } from './update-key.js';
+
+// Electron's patched fs treats app.asar as a virtual directory. The archive
+// itself must be checked through the unpatched filesystem, without globally
+// changing process.noAsar while other reads may be in flight.
+const archiveStat: typeof stat = process.versions.electron
+  ? (createRequire(import.meta.url)('original-fs') as typeof import('node:fs')).promises.stat
+  : stat;
 
 export const RELEASE_API = 'https://api.github.com/repos/jmdx-code/drive-workbench/releases/latest';
 const githubUrl = (raw: string) => {
@@ -208,12 +216,14 @@ export class PortableUpdater {
     }
     const root = path.resolve(this.options.appRoot);
     if (root === path.parse(root).root) throw Error('应用路径无效');
-    await access(
-      path.join(
-        root,
-        this.options.platform === 'win32' ? 'resources/app.asar' : 'Contents/Resources/app.asar',
-      ),
+    const archive = path.join(
+      root,
+      this.options.platform === 'win32' ? 'resources/app.asar' : 'Contents/Resources/app.asar',
     );
+    const archiveInfo = await archiveStat(archive).catch(() => {
+      throw Error('应用资源文件缺失或不可访问，请完整解压新版程序后重试');
+    });
+    if (!archiveInfo.isFile()) throw Error('应用资源不是有效的 ASAR 文件，请完整解压新版程序');
     const backup = `${root}.backup-${this.options.version}-${randomUUID().slice(0, 8)}`;
     const staging = path.join(this.options.cacheDir, 'unpacked-' + randomUUID());
     await mkdir(staging);

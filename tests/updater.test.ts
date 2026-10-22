@@ -202,4 +202,11 @@ describe('便携版自动更新', () => {
     await updater.check();
     expect(updater.state.status).toBe('ready');
   });
+  it('资源缺失或 app.asar 实际是目录时拒绝安装，并给出可理解提示', async () => {
+    const { updater, options } = await setup();
+    await updater.check();
+    await expect(updater.prepareInstall(123)).rejects.toThrow('资源文件缺失');
+    await mkdir(path.join(options.appRoot, 'resources/app.asar'), { recursive: true });
+    await expect(updater.prepareInstall(123)).rejects.toThrow('不是有效的 ASAR 文件');
+  });
 });
