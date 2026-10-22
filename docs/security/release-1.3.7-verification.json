@@ -1,0 +1,33 @@
+{
+  "tag": "v1.3.7",
+  "checkedAt": "2026-10-22T14:20:06.142Z",
+  "signatureVerified": true,
+  "assetMetadataVerified": [
+    {
+      "name": "DriveWorkbench-1.3.7-Windows-x64.zip",
+      "platform": "win32",
+      "arch": "x64",
+      "size": 158997223,
+      "sha256": "bb8facb7093e13f9ee93f1dbcce30663c3ba511a81042842f6e9eeceeb22c470",
+      "githubAssetDigestMatches": true
+    },
+    {
+      "name": "DriveWorkbench-1.3.7-macOS-arm64.zip",
+      "platform": "darwin",
+      "arch": "arm64",
+      "size": 132408295,
+      "sha256": "3dd26e3bb2c20a5a0438402a4427d717a3c6a15cbc037bd777e8df2b7b1030bf",
+      "githubAssetDigestMatches": true
+    },
+    {
+      "name": "DriveWorkbench-1.3.7-macOS-x64.zip",
+      "platform": "darwin",
+      "arch": "x64",
+      "size": 138123896,
+      "sha256": "6cd7206fe02e934e20007170c2ff9a3172f6f6a5829d3af6e59195a6b8e5e8c3",
+      "githubAssetDigestMatches": true
+    }
+  ],
+  "zipDownloaded": false,
+  "extracted": false
+}
