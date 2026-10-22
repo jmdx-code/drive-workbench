@@ -4,7 +4,7 @@
 
 ## 正式版运行
 
-当前版本为 **1.3.4**。从 [GitHub Releases](https://github.com/jmdx-code/drive-workbench/releases) 下载与你的系统匹配的便携 ZIP，完整解压后运行，无需安装。Windows 运行“云盘工作台.exe”；Mac Apple Silicon 选择 arm64，Intel 选择 x64，运行“云盘工作台.app”。不要从 ZIP 内直接运行。先退出旧版窗口再启动新版。
+当前版本为 **1.3.5**。从 [GitHub Releases](https://github.com/jmdx-code/drive-workbench/releases) 下载与你的系统匹配的便携 ZIP，完整解压后运行，无需安装。Windows 运行“云盘工作台.exe”；Mac Apple Silicon 选择 arm64，Intel 选择 x64，运行“云盘工作台.app”。不要从 ZIP 内直接运行。先退出旧版窗口再启动新版。
 
 ## 自动更新与自动构建
 
@@ -16,7 +16,7 @@ Mac 目前采用 ad-hoc 签名，未通过 Apple Developer ID 签名及公证，
 
 正式运行默认使用真实账号；没有账号时显示导入配置与浏览器授权引导。已有账号、连接和任务沿用 Windows 用户数据目录，升级不清空。演示账号和模式切换仅在独立 `WB_QA_DIR` 测试配置下启用，不出现在日常界面。
 
-`release/当前版本.json` 指向最新交付版本；保留 1.3.0 供回滚，更早的压缩包归档到 `archive/releases/`，重复的解压构建已清理。工程中的 `本地测试/` 是开发运行目录，通过 `npm run build:local` 更新；`npm run package` 构建正式版目录与 ZIP。测试、截图、参考项目、备份和开发依赖不放进交付包。
+`release/当前版本.json` 指向最新本地构建；最近的 1.3.1、1.3.2 便携版保留供回滚，早期构建和测试资料已移出工程。目录结构和整理边界见 [本地目录整理](docs/本地目录整理.md)。`本地测试/` 是开发运行目录，通过 `npm run build:local` 更新；`npm run package` 构建当前系统的正式便携包。测试、截图、参考项目、备份和开发依赖不放进交付包。
 
 1.3.1 统一了程序文件、窗口、侧栏和网页图标，正式启动不再初始化演示数据。图标源文件与多尺寸 ICO 位于 `assets/branding/`，`npm run build` 自动生成运行用 PNG。开发清理记录见 `docs/清理与图标验收-1.3.1.md`。
 
@@ -32,7 +32,7 @@ Mac 目前采用 ad-hoc 签名，未通过 Apple Developer ID 签名及公证，
 4. 可重复导入不同客户端配置并授权给同一个 Gmail，形成该账号的并发池。给其他 Gmail 授权时会创建独立账号，不覆盖已有身份。
 5. 已有 authorized_user 类型 token.json 也可导入，应用会先刷新并验证身份，再加密保存。
 
-OAuth 配置中的 client secret 在桌面应用中不是可保密的用户密码；真正需要保护的是用户 refresh token。本应用通过 Electron safeStorage 使用 Windows 系统保护保存连接，不提供内置第三方 OAuth 客户端。
+OAuth 配置中的 client secret 在桌面应用中不是可保密的用户密码；真正需要保护的是用户 refresh token。本应用通过 Electron safeStorage 使用 Windows 系统保护或 macOS 钥匙串保存连接，不提供内置第三方 OAuth 客户端。
 
 ## 文件操作
 
@@ -92,4 +92,4 @@ npm run package
 
 预览读取在单次操作内复用，父子目录同时选择时去除重叠扫描。转让保存邀请、接收与复核阶段，优先使用邀请返回的权限 ID；短暂传播延迟自动复查，未知写入先对账。权限添加/更新复用前一步验证结果，删除和替换仍保留额外冲突检查。任务卡片及 CSV 展示执行阶段的 Drive 请求统计，明细保留每项最近 40 条阶段、等待、限流及暂停事件。扫描、预览和 OAuth 令牌请求不计入任务执行计数；历史未计数任务不伪造历史调用量。
 
-API 基准：`node scripts/api-call-baseline.mjs`，结果位于 `test-results/api-optimized-1.3.0/`。旧 1.2.2 实测基准位于 `test-results/api-baseline-1.2.2/`，使用旧正式包编译代码及相同隔离 HTTP 数据重新运行。
+历史 API 请求对比保存在 `docs/benchmarks/api-1.3.0-comparison.json`，来自旧 1.2.2 与 1.3.0 编译代码的同一隔离 HTTP 数据。`node scripts/api-call-baseline.mjs` 可重新生成当前代码的请求计数；原始历史报告已随旧测试资料移出工程。

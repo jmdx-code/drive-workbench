@@ -12,12 +12,18 @@ const report = path.resolve(
 await mkdir(report, { recursive: true });
 const env = { ...process.env, WB_QA_DIR: profile, WB_QA_LIVE: '1' };
 delete env.ELECTRON_RUN_AS_NODE;
-const launch = () =>
-  electron.launch({
+const launch = async () => {
+  const application = await electron.launch({
     ...(executablePath ? { executablePath } : { args: ['.'] }),
     env,
     timeout: 45000,
   });
+  await application.firstWindow();
+  await application.evaluate(({ BrowserWindow }) =>
+    BrowserWindow.getAllWindows()[0].showInactive(),
+  );
+  return application;
+};
 let app;
 const errors = [],
   checks = [];
