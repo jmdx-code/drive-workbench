@@ -1,6 +1,6 @@
 {
   "name": "drive-workbench",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "private": true,
   "type": "module",
   "main": "dist-desktop/desktop/main.js",

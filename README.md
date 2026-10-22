@@ -4,7 +4,7 @@
 
 ## 正式版运行
 
-当前版本为 **1.3.3**。从 [GitHub Releases](https://github.com/jmdx-code/drive-workbench/releases) 下载与你的系统匹配的便携 ZIP，完整解压后运行，无需安装。Windows 运行“云盘工作台.exe”；Mac Apple Silicon 选择 arm64，Intel 选择 x64，运行“云盘工作台.app”。不要从 ZIP 内直接运行。先退出旧版窗口再启动新版。
+当前版本为 **1.3.4**。从 [GitHub Releases](https://github.com/jmdx-code/drive-workbench/releases) 下载与你的系统匹配的便携 ZIP，完整解压后运行，无需安装。Windows 运行“云盘工作台.exe”；Mac Apple Silicon 选择 arm64，Intel 选择 x64，运行“云盘工作台.app”。不要从 ZIP 内直接运行。先退出旧版窗口再启动新版。
 
 ## 自动更新与自动构建
 

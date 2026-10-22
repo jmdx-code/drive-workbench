@@ -1,0 +1,119 @@
+{
+  "scope": "isolated HTTP simulation; legacy 1.2.2 compiled package versus 1.3.0; no remote cloud writes or elapsed speed claims",
+  "rows": [
+    {
+      "scenario": "7-items-normal-transfer",
+      "collaborators": null,
+      "old": 49,
+      "new": 35,
+      "saved": 14,
+      "reductionPercent": 28.6,
+      "oldPauses": 0,
+      "newPauses": 0
+    },
+    {
+      "scenario": "7-items-one-invisible-pending-read-per-item",
+      "collaborators": null,
+      "old": 77,
+      "new": 35,
+      "saved": 42,
+      "reductionPercent": 54.5,
+      "oldPauses": 3,
+      "newPauses": 0
+    },
+    {
+      "scenario": "overlapping-parent-child-preview",
+      "collaborators": null,
+      "old": 8,
+      "new": 5,
+      "saved": 3,
+      "reductionPercent": 37.5,
+      "oldPauses": null,
+      "newPauses": null
+    },
+    {
+      "scenario": "add-collaborators-one-file",
+      "collaborators": 1,
+      "old": 5,
+      "new": 4,
+      "saved": 1,
+      "reductionPercent": 20.0,
+      "oldPauses": null,
+      "newPauses": null
+    },
+    {
+      "scenario": "add-collaborators-one-file",
+      "collaborators": 3,
+      "old": 11,
+      "new": 8,
+      "saved": 3,
+      "reductionPercent": 27.3,
+      "oldPauses": null,
+      "newPauses": null
+    },
+    {
+      "scenario": "add-collaborators-one-file",
+      "collaborators": 10,
+      "old": 32,
+      "new": 22,
+      "saved": 10,
+      "reductionPercent": 31.2,
+      "oldPauses": null,
+      "newPauses": null
+    }
+  ],
+  "normalEndToEnd": {
+    "old": 59,
+    "new": 44,
+    "reductionPercent": 25.4
+  },
+  "additionalAcceptanceLag": {
+    "scenario": "7-items-acceptance-lag-with-auto-recheck",
+    "items": 7,
+    "pauses": 0,
+    "metrics": {
+      "reads": 35,
+      "writes": 21,
+      "retries": 14,
+      "rateLimits": 0
+    },
+    "scan": {
+      "total": 4,
+      "reads": 4,
+      "writes": 0,
+      "categories": {
+        "GET-file": 1,
+        "list": 3
+      }
+    },
+    "open": {
+      "total": 1,
+      "reads": 1,
+      "writes": 0,
+      "categories": {
+        "GET-file": 1
+      }
+    },
+    "preview": {
+      "total": 4,
+      "reads": 4,
+      "writes": 0,
+      "categories": {
+        "GET-file": 1,
+        "list": 3
+      }
+    },
+    "execution": {
+      "total": 56,
+      "reads": 35,
+      "writes": 21,
+      "categories": {
+        "GET-file": 14,
+        "GET-permissions": 21,
+        "POST-permissions": 7,
+        "PATCH-permissions": 14
+      }
+    },
+    "endToEnd": 65
+  }
+}
