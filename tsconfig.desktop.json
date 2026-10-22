@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "outDir": "dist-desktop",
+    "rootDir": ".",
+    "types": ["node"],
+    "lib": ["ES2023", "DOM"]
+  },
+  "include": ["desktop", "core"]
+}

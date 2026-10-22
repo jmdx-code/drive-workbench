@@ -1,0 +1,44 @@
+/* Shared visual contract. No remote fonts or UI runtime dependencies. */
+:root {
+  color-scheme: light;
+  font-family: 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei', sans-serif;
+  font-synthesis: none;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--canvas);
+  --canvas: #f5f7fa;
+  --surface: #ffffff;
+  --surface-subtle: #f9fafb;
+  --surface-hover: #f0f4f7;
+  --text: #182230;
+  --text-secondary: #475467;
+  --muted: #667085;
+  --line: #e4e8ee;
+  --line-strong: #cfd6df;
+  --green: #24745d;
+  --green-hover: #1b5d4a;
+  --green-soft: #edf6f1;
+  --green-line: #c9e2d6;
+  --purple: #6953a6;
+  --purple-soft: #f2effa;
+  --amber: #94620e;
+  --amber-soft: #fff8e8;
+  --danger: #b63740;
+  --danger-soft: #fff1f2;
+  --focus-ring: #24745d40;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --control-height: 36px;
+  --shadow-sm: 0 1px 2px #18223008;
+  --shadow-popover: 0 8px 28px #1822301c, 0 2px 6px #1822300a;
+  --shadow-modal: 0 24px 80px #18223033;
+  --motion-fast: 140ms ease;
+}

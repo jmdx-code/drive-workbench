@@ -1,0 +1,92 @@
+name: Release portable apps
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing published release tag, for example v1.3.3'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: Windows-x64
+            os: windows-2025
+          - target: macOS-arm64
+            os: macos-15
+          - target: macOS-x64
+            os: macos-15-intel
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Verify release version
+        run: node scripts/verify-release-tag.mjs
+      - run: npm ci
+      - run: npm test
+      - run: npm run package
+      - name: Launch packaged application
+        run: node scripts/portable-smoke.mjs
+      - name: Windows business regression
+        if: runner.os == 'Windows'
+        run: node scripts/ci-windows-ui.mjs
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: packages-${{ matrix.target }}
+          path: |
+            release/*.zip
+            release/SHA256SUMS-*.txt
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+      - name: Preserve diagnostics
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: diagnostics-${{ matrix.target }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+  publish:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: packages-*
+          path: packages
+          merge-multiple: true
+      - name: Verify all packages and publish atomically after all builds pass
+        working-directory: packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat SHA256SUMS-*.txt > SHA256SUMS.txt
+          test "$(find . -maxdepth 1 -name '*.zip' | wc -l)" -eq 3
+          sha256sum --check SHA256SUMS.txt
+          gh release upload "$RELEASE_TAG" ./*.zip SHA256SUMS.txt --clobber

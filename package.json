@@ -1,0 +1,48 @@
+{
+  "name": "drive-workbench",
+  "version": "1.3.3",
+  "private": true,
+  "type": "module",
+  "main": "dist-desktop/desktop/main.js",
+  "description": "多账号 Google Drive 文件与权限工作台",
+  "author": "Drive Workbench",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "desktop:dev": "tsc -p tsconfig.desktop.json && electron . --dev",
+    "build": "node scripts/branding.mjs && tsc -p tsconfig.json && tsc -p tsconfig.desktop.json && vite build",
+    "test": "vitest run",
+    "package": "npm run build && node scripts/package.mjs",
+    "test:ui": "node scripts/ui-test.mjs",
+    "start": "electron .",
+    "build:local": "npm run build && node scripts/build-local.mjs",
+    "test:references": "node scripts/reference-ui-test.mjs",
+    "test:table": "node scripts/table-ui-test.mjs",
+    "test:permissions": "node scripts/owner-permission-ui-test.mjs",
+    "test:context": "node scripts/tree-context-ui-test.mjs",
+    "test:depth": "node scripts/scan-depth-ui-test.mjs",
+    "test:access": "node scripts/access-ui-test.mjs",
+    "test:data": "node scripts/data-avatar-ui-test.mjs"
+  },
+  "dependencies": {
+    "@tanstack/react-virtual": "3.14.21",
+    "lucide-react": "1.59.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@electron/asar": "4.3.1",
+    "@electron/packager": "20.3.0",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "electron": "44.9.1",
+    "playwright-core": "1.64.1",
+    "prettier": "3.9.10",
+    "rcedit": "^5.0.2",
+    "sharp": "^0.35.5",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
+  }
+}
